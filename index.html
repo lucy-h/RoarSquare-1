@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--<link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">-->
+
+    <title>RoarSquare</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/jumbotron-narrow.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+
+  <style type="text/css"></style></head>
+
+  <body style="">
+
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjrSMkd57qvC2idCXTLxCUCIcRvFpZzLg&sensor=false">
+    </script>
+    <script type="text/javascript">
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(40.67, -73.94),
+          zoom: 10
+        };
+        var map = new google.maps.Map(document.getElementById("map-canvas"),
+            mapOptions);
+      }
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+
+
+    <!-- Header -->
+    <div class="container">
+      <div class="header">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+        <h2 style="color:#0072B1;">RoarSquare</h2>
+      </div>
+
+      <!-- Map Space -->
+      <div style="border:solid;border-width:2px;border-color:#D1D1E0" id="map-canvas"></div>
+      <br><br>
+
+      <!-- Itinerary Builder -->
+      <div class="row">
+
+        <!-- Itinerary -->
+        <div class="col-lg-6 col-sm-6 col-xs-6">
+          <h3 style="margin-top: 5px;">My Itinerary</h3>
+          <div class="list-group" style="overflow:auto; height:517px;">
+            <a href="#" class="list-group-item active">Cras justo odio</a>
+            <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+            <a href="#" class="list-group-item">Morbi leo risus</a>
+            <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+            <a href="#" class="list-group-item">Vestibulum at eros</a>
+            <a href="#" class="list-group-item">Vestibulum at eros</a>
+            <a href="#" class="list-group-item">Vestibulum at eros</a>
+            <a href="#" class="list-group-item">Vestibulum at eros</a>
+            <a href="#" class="list-group-item">Vestibulum at eros</a>
+            <a href="#" class="list-group-item">Vestibulum at eros</a>
+            <a href="#" class="list-group-item">Vestibulum at eros</a>
+            <a href="#" class="list-group-item">Vestibulum at eros</a>
+            <a href="#" class="list-group-item">Vestibulum at eros</a>
+            <a href="#" class="list-group-item">Vestibulum at eros</a>
+            <a href="#" class="list-group-item">Vestibulum at eros</a>
+          </div>
+        </div>
+
+        <!-- Search Taskbar -->
+        <div class="col-lg-6 col-sm-6 col-xs-6">
+          <h3 style="margin-top: 5px;">Explores New Places</h3>
+          <div class="container">
+            <div class="row">
+              <div style="padding:0px;" class="col-lg-6 col-sm-6 col-xs-6">
+                <div style="width:93%" class="input-group">
+                  <input id="query" style="width:44%;" type="text" class="form-control" placeholder="I'm looking for...">
+                  <input id="location" style="width:44%;" type="text" class="form-control" placeholder="New York">
+                  <button id="search-button" style="padding-left:10px;" type="button" class="btn btn-default btn-md pull-right">
+                    <span class="glyphicon glyphicon-search"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+            <div class="panel panel-info">
+              <div class="panel-heading">
+                <h3 id="search-panel" class="panel-title">Search for a new destination!</h3>
+              </div>
+            </div>
+          <div id="results" class="list-group" style="overflow:auto; height:400px;">
+          </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p style="display:inline;">© RoarSquare 2013</p>
+        <img class="FSLogo" src="assets/FSLogo.png" alt="Powered by FourSquare"/> 
+      </div>
+
+    </div>
+
+    <!-- Javascript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery-1.10.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+
+</body></html>

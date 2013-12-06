@@ -1,0 +1,19 @@
+img {
+	width: 250px;
+	height: auto;
+	float: right;
+}
+
+#map-canvas {
+	height: 500px;
+}
+
+html {
+	height: 100%;	
+}
+
+body { 
+	height: 100%; 
+	margin: 0; 
+	padding: 0 
+}
