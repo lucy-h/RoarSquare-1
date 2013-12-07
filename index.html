@@ -35,14 +35,13 @@
       google.maps.event.addDomListener(window, 'load', initialize);
     </script>
 
-
     <!-- Header -->
     <div class="container">
       <div class="header">
         <ul class="nav nav-pills pull-right">
           <li><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
+          <li><a href="#">Create New Itinerary</a></li>
+          <li><a href="#">Itineraries</a></li>
         </ul>
         <h2 style="color:#0072B1;">RoarSquare</h2>
       </div>
@@ -57,23 +56,20 @@
         <!-- Itinerary -->
         <div class="col-lg-6 col-sm-6 col-xs-6">
           <h3 style="margin-top: 5px;">My Itinerary</h3>
-          <div class="list-group" style="overflow:auto; height:517px;">
-            <a href="#" class="list-group-item active">Cras justo odio</a>
-            <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
-            <a href="#" class="list-group-item">Morbi leo risus</a>
-            <a href="#" class="list-group-item">Porta ac consectetur ac</a>
-            <a href="#" class="list-group-item">Vestibulum at eros</a>
-            <a href="#" class="list-group-item">Vestibulum at eros</a>
-            <a href="#" class="list-group-item">Vestibulum at eros</a>
-            <a href="#" class="list-group-item">Vestibulum at eros</a>
-            <a href="#" class="list-group-item">Vestibulum at eros</a>
-            <a href="#" class="list-group-item">Vestibulum at eros</a>
-            <a href="#" class="list-group-item">Vestibulum at eros</a>
-            <a href="#" class="list-group-item">Vestibulum at eros</a>
-            <a href="#" class="list-group-item">Vestibulum at eros</a>
-            <a href="#" class="list-group-item">Vestibulum at eros</a>
-            <a href="#" class="list-group-item">Vestibulum at eros</a>
-          </div>
+          <ul id="itinerary" class="list-group sortable" style="overflow:auto; height:510px;">
+            <li class="list-group-item">Mcdonalds</li>
+            <li class="list-group-item">Cras justo odio</li>
+            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">Mcdonalds</li>
+            <li class="list-group-item">Mcdonalds</li>
+            <li class="list-group-item">Mcdonalds</li>
+            <li class="list-group-item">Mcdonalds</li>
+            <li class="list-group-item">Mcdonalds</li>
+            <li class="list-group-item">Mcdonalds</li>
+            <li class="list-group-item">Mcdonalds</li>
+            <li class="list-group-item">Mcdonalds</li>
+            <li class="list-group-item">Mcdonalds</li>
+          </ul>
         </div>
 
         <!-- Search Taskbar -->
@@ -99,13 +95,21 @@
               </div>
             </div>
           <div id="results" class="list-group" style="overflow:auto; height:400px;">
+            <a href="#" class="list-group-item">
+              <h4 class="text-center">Store Name</h4>
+              <h6 class="text-center">116th and Broadway </h6>
+              <h6 class="text-center">(408) 564-1522</h6>
+              <h6 class="text-center">Open until midnight</h6>
+              <h6 class="text-center">Pizza Place</h6>
+              <img style="width:200px;" src="https://irs2.4sqi.net/img/general/original/FVQLIPZXSEVCSCT3YU0SNMGDCADXBHRZYFSJUAGP5SXPCXPF.jpg">
+            </a>
           </div>
       </div>
 
       <!-- Footer -->
       <div class="footer">
         <p style="display:inline;">© RoarSquare 2013</p>
-        <img class="FSLogo" src="assets/FSLogo.png" alt="Powered by FourSquare"/> 
+        <img class="FSLogo pull-right" src="assets/FSLogo.png" alt="Powered by FourSquare"/> 
       </div>
 
     </div>
@@ -113,7 +117,9 @@
     <!-- Javascript -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="js/jquery-1.10.2.min.js"></script>
+    <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/drag.js"></script>
     <script src="js/main.js"></script>
 
 </body></html>
