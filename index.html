@@ -23,17 +23,6 @@
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjrSMkd57qvC2idCXTLxCUCIcRvFpZzLg&sensor=false">
     </script>
-    <script type="text/javascript">
-      function initialize() {
-        var mapOptions = {
-          center: new google.maps.LatLng(40.67, -73.94),
-          zoom: 10
-        };
-        var map = new google.maps.Map(document.getElementById("map-canvas"),
-            mapOptions);
-      }
-      google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
 
     <!-- Header -->
     <div class="container">
@@ -57,9 +46,11 @@
         <div class="col-lg-6 col-sm-6 col-xs-6">
           <h3 style="margin-top: 5px;">My Itinerary</h3>
           <ul id="itinerary" class="list-group sortable" style="overflow:auto; height:510px;">
-            <li class="list-group-item">Mcdonalds</li>
-            <li class="list-group-item">Cras justo odio</li>
-            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <div id="itinerary-panel"  class="panel panel-info">
+              <div class="panel-heading">
+                <h3 class="panel-title">Add a New Destination!</h3>
+              </div>
+            </div>
           </ul>
         </div>
 

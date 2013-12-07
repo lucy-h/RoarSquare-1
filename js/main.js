@@ -4,6 +4,7 @@ var location_text;
 var itinerary = {};
 var results = [];
 var mapSearch = [];
+var mapPaths = [];
 var map;
 var infowindows;
 
@@ -24,7 +25,19 @@ Venue Object
 
 $( document ).ready(function() {
 
+// Initialize
+itinerary.length = 0;
+
 // Functions
+function initialize() {
+	var mapOptions = {
+		center: new google.maps.LatLng(40.67, -73.94),
+		zoom: 10
+	};
+	map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+
 function parseVenues(venues) {
 	var new_results = [];
 	for (var i = 0; i < venues.length; i++) {
@@ -75,14 +88,18 @@ function postVenuesInSearch(new_results) {
 }
 
 function addToMap(venues) {
+	// Remove all map markers.
+	for (var i = 0; i < mapSearch.length; i++) {
+		mapSearch[i].setMap(null);
+	}
 	mapSearch = [];
 	infowindows = [];
 	var myLatlng = new google.maps.LatLng(venues[0].lat,venues[0].long);
-	var mapOptions = {
-		zoom: 14,
-		center: myLatlng
-	};
-	map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+	if (map.getZoom() != 14) {
+		map.setZoom(14);
+	}
+	map.panTo(myLatlng);
+	//map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 	for (var i = 0; i < venues.length; i++) {
 		var newLatlng = new google.maps.LatLng(venues[i].lat,venues[i].long);
 		// To add the marker to the map, use the 'map' property
@@ -149,9 +166,55 @@ $(function () {
 
 });
 
-function mapButton(index) {
-	for (var i = 0; i < infowindows.length; i++) {
-		infowindows[i].close();
+// Fill map with path.
+function drawLines(map) {
+	if (itinerary.length > 1) {
+		for (var i = 1; i < itinerary.length; i++) {
+			var last_venue = itinerary[i - 1];
+			var curr_venue = itinerary[i];
+
+			var coordinates = [
+				new google.maps.LatLng(last_venue.lat, last_venue.long),
+				new google.maps.LatLng(curr_venue.lat, curr_venue.long)
+			];
+			var newPath = new google.maps.Polyline({
+				path: coordinates,
+				geodesic: true,
+				strokeColor: '#FF0000',
+				strokeOpacity: 0.8,
+				strokeWeight: 4
+			});
+			mapPaths.push(newPath);
+			newPath.setMap(map);
+		}
 	}
-	$('#itinerary').append("<a href=\"#\" class=\"list-group-item result" + index + "\">" + "<div><h4 style=\"display:inline;\">" + results[index].name + "</h4><span class=\"label label-info pull-right\">" + results[index].rating + "</span></div><div><h6 style=\"display:inline;\">" + results[index].location + "</h6><h6 class=\"pull-right\">" + results[index].hours + "</h6></div><h6 style=\"margin-top:3px;\">" + results[index].contact + "</h6>" + "</a>");
+}
+
+// Fill map with itinerary markers.
+function addItinerary(map, venue) {
+	$('#itinerary-panel').hide();
+	var image = 'assets/star.png';
+	var newLatlng = new google.maps.LatLng(venue.lat,venue.long);
+	var marker = new google.maps.Marker({
+		position: newLatlng,
+		title: venue.name,
+		icon: image
+	});
+	marker.setMap(map);
+	drawLines(map);
+}
+
+function mapButton(index) {
+	if(!itinerary.hasOwnProperty(index)){
+		for (var i = 0; i < infowindows.length; i++) {
+			infowindows[i].close();
+		}
+		itinerary[itinerary.length] = results[index];
+		itinerary.length++;
+
+		$('#itinerary').append("<a href=\"#\" class=\"list-group-item result" + index + "\">" + "<div><h4 style=\"display:inline;\">" + results[index].name + "</h4><span class=\"label label-info pull-right\">" + results[index].rating + "</span></div><div><h6 style=\"display:inline;\">" + results[index].location + "</h6><h6 class=\"pull-right\">" + results[index].hours + "</h6></div><h6 style=\"margin-top:3px;\">" + results[index].contact + "</h6>" + "</a>");
+		addItinerary(map, results[index]);
+	} else {
+		infowindows[index].close();
+	}
 }
