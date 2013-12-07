@@ -1,7 +1,7 @@
 // Variables
 var query_txt;
 var location_text;
-var itinerary = {};
+var itinerary = [];
 var results = [];
 var mapSearch = [];
 var mapPaths = [];
@@ -24,9 +24,6 @@ Venue Object
 */
 
 $( document ).ready(function() {
-
-// Initialize
-itinerary.length = 0;
 
 // Functions
 function initialize() {
@@ -153,21 +150,44 @@ search_button.click(function() {
 
 });
 
+function refreshItinerary() {
+	var new_itinerary = [];
+	var venue = $('#itinerary-panel');
+	for (var i = 0; i < itinerary.length; i++) {
+		venue = venue.next();
+		var id = venue.attr('id');
+		var index = id.replace( /^\D+/g, '');
+		new_itinerary[i] = itinerary[index];
+		venue.attr("id", "itinerary" + i);
+	}
+	itinerary = [];
+	for (var i = 0; i < new_itinerary.length; i++) {
+		itinerary[i] = new_itinerary[i];
+	}
+	drawLines(map);
+}
+
 // Drag functionality.
 $(function () {
     $("#itinerary").sortable({
         tolerance: 'pointer',
         revert: 'invalid',
-        forceHelperSize: true
+        forceHelperSize: true,
+        update: function(event, ui) {
+			refreshItinerary();
+        }
     });
 });
-
-
 
 });
 
 // Fill map with path.
 function drawLines(map) {
+	for (var i = 0; i < mapPaths.length; i++) {
+		mapPaths[i].setMap(null);
+	}
+	mapPaths = [];
+	console.log(itinerary);
 	if (itinerary.length > 1) {
 		for (var i = 1; i < itinerary.length; i++) {
 			var last_venue = itinerary[i - 1];
@@ -193,6 +213,7 @@ function drawLines(map) {
 // Fill map with itinerary markers.
 function addItinerary(map, venue) {
 	$('#itinerary-panel').hide();
+	$('#save-itinerary').show();
 	var image = 'assets/star.png';
 	var newLatlng = new google.maps.LatLng(venue.lat,venue.long);
 	var marker = new google.maps.Marker({
@@ -205,14 +226,21 @@ function addItinerary(map, venue) {
 }
 
 function mapButton(index) {
-	if(!itinerary.hasOwnProperty(index)){
+	var venue = results[index];
+	var added = false;
+	for (var i = 0; i < itinerary.length; i++) {
+		if (venue == itinerary[i]) {
+			added = true;
+		}
+	}
+
+	if(!added) {
 		for (var i = 0; i < infowindows.length; i++) {
 			infowindows[i].close();
 		}
-		itinerary[itinerary.length] = results[index];
-		itinerary.length++;
+		itinerary.push(results[index]);
 
-		$('#itinerary').append("<a href=\"#\" class=\"list-group-item result" + index + "\">" + "<div><h4 style=\"display:inline;\">" + results[index].name + "</h4><span class=\"label label-info pull-right\">" + results[index].rating + "</span></div><div><h6 style=\"display:inline;\">" + results[index].location + "</h6><h6 class=\"pull-right\">" + results[index].hours + "</h6></div><h6 style=\"margin-top:3px;\">" + results[index].contact + "</h6>" + "</a>");
+		$('#itinerary').append("<a href=\"#\" class=\"list-group-item\" id=\"itinerary" + (itinerary.length - 1) + "\">" + "<div><h4 style=\"display:inline;\">" + results[index].name + "</h4><span class=\"label label-info pull-right\">" + results[index].rating + "</span></div><div><h6 style=\"display:inline;\">" + results[index].location + "</h6><h6 class=\"pull-right\">" + results[index].hours + "</h6></div><h6 style=\"margin-top:3px;\">" + results[index].contact + "</h6>" + "</a>");
 		addItinerary(map, results[index]);
 	} else {
 		infowindows[index].close();
