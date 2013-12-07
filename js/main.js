@@ -1,5 +1,3 @@
-$( document ).ready(function() {
-
 // Variables
 var query_txt;
 var location_text;
@@ -23,6 +21,8 @@ Venue Object
 - canonical url
 - rating
 */
+
+$( document ).ready(function() {
 
 // Functions
 function parseVenues(venues) {
@@ -93,7 +93,7 @@ function addToMap(venues) {
 		mapSearch[i] = marker;
 		mapSearch[i].setMap(map);
 
-		var content_string = "<a href=\"#\" class=\"list-group-item\"><h4 class=\"text-center\">" + venues[i].name + "</h4><h6 class=\"text-center\">" + venues[i].location + "</h6><h6 class=\"text-center\">" + venues[i].contact + "</h6><h6 class=\"text-center\">" + venues[i].hours + "</h6><h6 class=\"text-center\">" + venues[i].category + "</h6><button type=\"button\" class=\"btn btn-info btn-lg btn-block\">Add</button></a>";
+		var content_string = "<a href=\"#\" class=\"list-group-item\"><h4 class=\"text-center\">" + venues[i].name + "</h4><h6 class=\"text-center\">" + venues[i].location + "</h6><h6 class=\"text-center\">" + venues[i].contact + "</h6><h6 class=\"text-center\">" + venues[i].hours + "</h6><h6 class=\"text-center\">" + venues[i].category + "</h6><button onclick=\"mapButton("+i+")\" id=\"addbutton" + i + "\"  type=\"button\" class=\"btn btn-info btn-lg btn-block\">Add</button></a>";
 
 		var infowindow = new google.maps.InfoWindow({
 			content: content_string,
@@ -148,3 +148,10 @@ $(function () {
 
 
 });
+
+function mapButton(index) {
+	for (var i = 0; i < infowindows.length; i++) {
+		infowindows[i].close();
+	}
+	$('#itinerary').append("<a href=\"#\" class=\"list-group-item result" + index + "\">" + "<div><h4 style=\"display:inline;\">" + results[index].name + "</h4><span class=\"label label-info pull-right\">" + results[index].rating + "</span></div><div><h6 style=\"display:inline;\">" + results[index].location + "</h6><h6 class=\"pull-right\">" + results[index].hours + "</h6></div><h6 style=\"margin-top:3px;\">" + results[index].contact + "</h6>" + "</a>");
+}
