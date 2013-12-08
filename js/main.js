@@ -90,6 +90,7 @@ function addToMap(venues) {
 	for (var i = 0; i < mapSearch.length; i++) {
 		mapSearch[i].setMap(null);
 	}
+	drawMarkers(map);
 	mapSearch = [];
 	infowindows = [];
 	var myLatlng = new google.maps.LatLng(venues[0].lat,venues[0].long);
@@ -150,6 +151,22 @@ search_button.click(function() {
 	});
 
 });
+
+// Function to remove queries.
+var remove_button = $('#remove-button');
+remove_button.click(function() {
+	$('#results').html("");
+	for (var i = 0; i < mapSearch.length; i++) {
+		mapSearch[i].setMap(null);
+	}
+	mapSearch = [];
+	results = [];
+	infowindows = [];
+	$('#query').val("");
+	$('#location').val("");
+	$('#search-panel').html("Search for a new destination!");
+	drawMarkers(map);
+})
 
 function refreshItinerary() {
 	var new_itinerary = [];
@@ -227,6 +244,7 @@ function drawMarkers(map) {
 		} else {
 			itineraryMarkers[i].setIcon(star);
 		}
+		itineraryMarkers[i].setMap(map);
 	}
 }
 
