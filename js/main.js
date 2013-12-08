@@ -1,7 +1,9 @@
 // Variables
 var query_txt;
 var location_text;
+var itineraries = [];
 var itinerary = [];
+var itinerary_name;
 var itineraryMarkers = [];
 var results = [];
 var mapSearch = [];
@@ -42,7 +44,11 @@ function parseVenues(venues) {
 		var venue = {};
 		var new_venue = venues[i]["venue"];
 		venue.name = new_venue.name;
-		venue.location = new_venue["location"].address;
+		if (new_venue["location"] && new_venue["location"].hasOwnProperty("address")) {
+			venue.location = new_venue["location"].address;
+		} else {
+			venue.location = "Location Unavailable";
+		}
 		venue.lat = new_venue["location"].lat;
 		venue.long = new_venue["location"].lng;
 		if (new_venue["contact"] && new_venue["contact"].hasOwnProperty("formattedPhone")) {
@@ -166,7 +172,46 @@ remove_button.click(function() {
 	$('#location').val("");
 	$('#search-panel').html("Search for a new destination!");
 	drawMarkers(map);
-})
+});
+
+// Function to save itinerary name.
+var name_button = $('#name-button');
+name_button.click(function() {
+	itinerary_name = $('#itinerary-name').val();
+	$('#name-input').hide();
+	$('#itinerary-title').html(itinerary_name);
+});
+
+// Function to save entire itinerary.
+var save_button = $('#save-itinerary');
+save_button.click(function() {
+	var new_itinerary = {};
+	new_itinerary.name = itinerary_name;
+	new_itinerary.schedule = itinerary;
+	new_itinerary.markers = itineraryMarkers;
+	itineraries.push(new_itinerary);
+	itinerary = [];
+	for (var i = 0; i < itineraryMarkers.length; i++) {
+		itineraryMarkers[i].setMap(null);
+	}
+	itineraryMarkers = [];
+	query_txt = "";
+	location_text = "";
+	itinerary_name = "";
+	results = [];
+	for (var i = 0; i < mapSearch.length; i++) {
+		mapSearch[i].setMap(null);
+	}
+	for (var i = 0; i < mapPaths.length; i++) {
+		mapPaths[i].setMap(null);
+	}
+	mapSearch = [];
+	mapPaths = [];
+	$('#results').html("");
+	$('#search-panel').html("Search for a new destination!");
+	$('#itinerary').html("<div id=\"itinerary-panel\" class=\"panel panel-info\"><div class=\"panel-heading\"><h3 class=\"panel-title\">Add a New Destination!</h3></div></div>");
+	$('#save-itinerary').hide();
+});
 
 function refreshItinerary() {
 	var new_itinerary = [];
@@ -179,6 +224,7 @@ function refreshItinerary() {
 		new_itinerary[i] = itinerary[index];
 		new_markers[i] = itineraryMarkers[index];
 		venue.attr("id", "itinerary" + i);
+		venue.html("<div><h4 style=\"display:inline;\">" + new_itinerary[i].name + "</h4><span class=\"label label-info pull-right\">" + new_itinerary[i].rating + "</span></div><div><h6 style=\"display:inline;\">" + new_itinerary[i].location + "</h6><h6 class=\"pull-right\" id=\"hideForRemoveButton" + i + "\">"  + new_itinerary[i].hours + "</h6><button style=\"display:none;\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"removeFromItinerary(" + i + ")\" id=\"removeitinerary" + i + "\" type=\"button\"><span class=\"glyphicon glyphicon-remove\"></span></button></div><h6 style=\"margin-top:3px;\">" + new_itinerary[i].contact + "</h6>");
 	}
 	itinerary = [];
 	itineraryMarkers = [];
@@ -257,6 +303,24 @@ function addItinerary(map, venue, marker) {
 	drawLines(map);
 }
 
+function showRemoveButton(event) {
+	var id = event.currentTarget.id;
+	var idx = id.replace( /^\D+/g, '');
+	var toHide = "#hideForRemoveButton" + idx;
+	var toShow = "#removeitinerary" + idx;
+	$(toHide).hide();
+	$(toShow).show();
+}
+
+function hideRemoveButton(event) {
+	var id = event.currentTarget.id;
+	var idx = id.replace( /^\D+/g, '');
+	var toHide = "#removeitinerary" + idx;
+	var toShow = "#hideForRemoveButton" + idx;
+	$(toHide).hide();
+	$(toShow).show();
+}
+
 function mapButton(index) {
 	var venue = results[index];
 	var added = false;
@@ -272,9 +336,64 @@ function mapButton(index) {
 		}
 		itinerary.push(results[index]);
 
-		$('#itinerary').append("<a href=\"#\" class=\"list-group-item\" id=\"itinerary" + (itinerary.length - 1) + "\">" + "<div><h4 style=\"display:inline;\">" + results[index].name + "</h4><span class=\"label label-info pull-right\">" + results[index].rating + "</span></div><div><h6 style=\"display:inline;\">" + results[index].location + "</h6><h6 class=\"pull-right\">" + results[index].hours + "</h6></div><h6 style=\"margin-top:3px;\">" + results[index].contact + "</h6>" + "</a>");
+		$('#itinerary').append("<a href=\"#\" class=\"list-group-item\" id=\"itinerary" + (itinerary.length - 1) + "\">" + "<div><h4 style=\"display:inline;\">" + results[index].name + "</h4><span class=\"label label-info pull-right\">" + results[index].rating + "</span></div><div><h6 style=\"display:inline;\">" + results[index].location + "</h6><h6 class=\"pull-right\" id=\"hideForRemoveButton" + (itinerary.length - 1) + "\">"  + results[index].hours + "</h6><button style=\"display:none;\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"removeFromItinerary(" + (itinerary.length - 1) + ")\" id=\"removeitinerary" + (itinerary.length - 1) + "\" type=\"button\"><span class=\"glyphicon glyphicon-remove\"></span></button></div><h6 style=\"margin-top:3px;\">" + results[index].contact + "</h6>" + "</a>");
+		
+		// Hover functionality on remove button.
+		var name = "#itinerary" + (itinerary.length - 1);
+		$(name).hover(function(event) {
+				showRemoveButton(event);
+			}, function(event) {
+				hideRemoveButton(event);
+			}
+		);
+
 		addItinerary(map, results[index], mapSearch[index]);
 	} else {
 		infowindows[index].close();
 	}
+}
+
+function refreshItinerary() {
+	var new_itinerary = [];
+	var new_markers = [];
+	var venue = $('#itinerary-panel');
+	var i = 0;
+	while (venue.next().length) {
+		venue = venue.next();
+		var id = venue.attr('id');
+		var index = id.replace( /^\D+/g, '');
+		new_itinerary[i] = itinerary[index];
+		new_markers[i] = itineraryMarkers[index];
+		venue.attr("id", "itinerary" + i);
+		venue.html("<div><h4 style=\"display:inline;\">" + new_itinerary[i].name + "</h4><span class=\"label label-info pull-right\">" + new_itinerary[i].rating + "</span></div><div><h6 style=\"display:inline;\">" + new_itinerary[i].location + "</h6><h6 class=\"pull-right\" id=\"hideForRemoveButton" + i + "\">"  + new_itinerary[i].hours + "</h6><button style=\"display:none;\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"removeFromItinerary(" + i + ")\" id=\"removeitinerary" + i + "\" type=\"button\"><span class=\"glyphicon glyphicon-remove\"></span></button></div><h6 style=\"margin-top:3px;\">" + new_itinerary[i].contact + "</h6>");
+		i++;
+	}
+	for (var i = 0; i < itineraryMarkers.length; i++) {
+		itineraryMarkers[i].setMap(null);
+	}
+	itinerary = [];
+	itineraryMarkers = [];
+	for (var i = 0; i < new_itinerary.length; i++) {
+		itinerary[i] = new_itinerary[i];
+		itineraryMarkers[i] = new_markers[i];
+	}
+	drawLines(map);
+	drawMarkers(map);
+}
+
+function removeFromItinerary(index) {
+	var name = "#itinerary" + index;
+	var venue = $(name);
+	//var id = venue.attr('id');
+	//var idx = id.replace( /^\D+/g, '');
+	//itinerary.splice(idx, 1);
+	//itineraryMarkers.splice(idx, 1);
+	venue.remove();
+	refreshItinerary();
+	//drawMarkers(map);
+	//drawLines(map);
+}
+
+function changeName() {
+	$('#name-input').show();
 }

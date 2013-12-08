@@ -19,3 +19,18 @@ body {
 	margin: 0; 
 	padding: 0; 
 }
+
+#itinerary-title {
+	color: #2C2C2C;
+}
+
+#itinerary-title:visited {
+	color: #000000;
+	text-decoration: none;
+}
+
+
+#itinerary-title:hover {
+	color: #0072B1;
+	text-decoration: none;
+}

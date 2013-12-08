@@ -44,7 +44,15 @@
 
         <!-- Itinerary -->
         <div class="col-lg-6 col-sm-6 col-xs-6">
-          <h3 style="margin-top: 5px;">My Itinerary</h3>
+          <h3 style="margin-top: 5px;">
+            <a id="itinerary-title" onclick="changeName()">My Itinerary</a>
+          </h3>
+           <div id="name-input" style="width:100%;margin-bottom:20px;" class="input-group">
+              <input id="itinerary-name" style="width:90%;" type="text" class="form-control" placeholder="Name this itinerary">
+              <button id="name-button" style="padding-left:8px;margin-left:5px;" type="button" class="btn btn-default btn-md">
+                <span class="glyphicon glyphicon-pencil"></span>
+              </button>
+            </div>
           <ul id="itinerary" class="list-group sortable" style="overflow:auto; max-height:510px;">
             <div id="itinerary-panel" class="panel panel-info">
               <div class="panel-heading">
