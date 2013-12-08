@@ -2,6 +2,7 @@
 var query_txt;
 var location_text;
 var itinerary = [];
+var itineraryMarkers = [];
 var results = [];
 var mapSearch = [];
 var mapPaths = [];
@@ -152,19 +153,24 @@ search_button.click(function() {
 
 function refreshItinerary() {
 	var new_itinerary = [];
+	var new_markers = [];
 	var venue = $('#itinerary-panel');
 	for (var i = 0; i < itinerary.length; i++) {
 		venue = venue.next();
 		var id = venue.attr('id');
 		var index = id.replace( /^\D+/g, '');
 		new_itinerary[i] = itinerary[index];
+		new_markers[i] = itineraryMarkers[index];
 		venue.attr("id", "itinerary" + i);
 	}
 	itinerary = [];
+	itineraryMarkers = [];
 	for (var i = 0; i < new_itinerary.length; i++) {
 		itinerary[i] = new_itinerary[i];
+		itineraryMarkers[i] = new_markers[i];
 	}
 	drawLines(map);
+	drawMarkers(map);
 }
 
 // Drag functionality.
@@ -187,7 +193,6 @@ function drawLines(map) {
 		mapPaths[i].setMap(null);
 	}
 	mapPaths = [];
-	console.log(itinerary);
 	if (itinerary.length > 1) {
 		for (var i = 1; i < itinerary.length; i++) {
 			var last_venue = itinerary[i - 1];
@@ -210,18 +215,27 @@ function drawLines(map) {
 	}
 }
 
+function drawMarkers(map) {
+	var star = 'assets/star.png';
+	var start = 'assets/start.png';
+	var finish = 'assets/finish.png';
+	for (var i = 0; i < itineraryMarkers.length; i++) {
+		if (i == 0) {
+			itineraryMarkers[i].setIcon(start);
+		} else if (i == itineraryMarkers.length - 1) {
+			itineraryMarkers[i].setIcon(finish);
+		} else {
+			itineraryMarkers[i].setIcon(star);
+		}
+	}
+}
+
 // Fill map with itinerary markers.
-function addItinerary(map, venue) {
+function addItinerary(map, venue, marker) {
 	$('#itinerary-panel').hide();
 	$('#save-itinerary').show();
-	var image = 'assets/star.png';
-	var newLatlng = new google.maps.LatLng(venue.lat,venue.long);
-	var marker = new google.maps.Marker({
-		position: newLatlng,
-		title: venue.name,
-		icon: image
-	});
-	marker.setMap(map);
+	itineraryMarkers.push(marker);
+	drawMarkers(map);
 	drawLines(map);
 }
 
@@ -241,7 +255,7 @@ function mapButton(index) {
 		itinerary.push(results[index]);
 
 		$('#itinerary').append("<a href=\"#\" class=\"list-group-item\" id=\"itinerary" + (itinerary.length - 1) + "\">" + "<div><h4 style=\"display:inline;\">" + results[index].name + "</h4><span class=\"label label-info pull-right\">" + results[index].rating + "</span></div><div><h6 style=\"display:inline;\">" + results[index].location + "</h6><h6 class=\"pull-right\">" + results[index].hours + "</h6></div><h6 style=\"margin-top:3px;\">" + results[index].contact + "</h6>" + "</a>");
-		addItinerary(map, results[index]);
+		addItinerary(map, results[index], mapSearch[index]);
 	} else {
 		infowindows[index].close();
 	}
