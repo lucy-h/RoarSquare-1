@@ -3,7 +3,7 @@ var query_txt;
 var location_text;
 var itineraries = [];
 var itinerary = [];
-var itinerary_name;
+var itinerary_name = "Your Itinerary";
 var itineraryMarkers = [];
 var results = [];
 var mapSearch = [];
@@ -11,6 +11,8 @@ var mapPaths = [];
 var map;
 var infowindows = [];
 var itineraryInfo = [];
+var currItinerary;
+var isNewItinerary = true;
 
 // Constants
 var MAX_QUERY_SIZE = 15;
@@ -28,6 +30,26 @@ Venue Object
 */
 
 $( document ).ready(function() {
+
+itineraries = recreate();
+if (itineraries !== null) {
+	for (var i = 0; i < itineraries.length; i++) {
+		$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>")
+	}
+} else {
+	itineraries = [];
+}
+
+console.log(itineraries);
+
+if (itineraries) {
+	for (var i = 0; i < itineraries.length; i++) {
+		$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>")
+	}
+	createNewItinerary();
+} else {
+	itineraries = [];
+}
 
 // Functions
 function initialize() {
@@ -139,6 +161,7 @@ function addToMap(venues) {
 // Function to process results for the given queries.
 var search_button = $('#search-button');
 search_button.click(function() {
+	$('#loader').show();
 	query_txt = $('#query').val();
 	location_text = $('#location').val();
 	$.get("https://api.foursquare.com/v2/venues/explore?near=" + location_text + "&query=" + query_txt + "&limit=" + MAX_QUERY_SIZE + "&client_id=5QOFVXQSQM2SECMPYPSWE3VK0Y5ORTYW4ON0ZH1XKGZQTVHN&client_secret=SANTGA13QLXWNZFX55VYD4QTEQISAMTLZVLS350WOPOSRNFY&v=20131206", function(data, status) {
@@ -157,6 +180,7 @@ search_button.click(function() {
 		}
 	});
 
+	$('#loader').fadeOut(2000);
 });
 
 // Function to remove queries.
@@ -191,7 +215,11 @@ save_button.click(function() {
 	new_itinerary.schedule = itinerary;
 	new_itinerary.markers = itineraryMarkers;
 	new_itinerary.info = itineraryInfo;
-	itineraries.push(new_itinerary);
+	if (isNewItinerary) {
+		itineraries.push(new_itinerary);
+	} else {
+		itineraries[currItinerary] = new_itinerary;
+	}
 	itinerary = [];
 	for (var i = 0; i < itineraryMarkers.length; i++) {
 		itineraryMarkers[i].setMap(null);
@@ -200,7 +228,7 @@ save_button.click(function() {
 	itineraryInfo = [];
 	query_txt = "";
 	location_text = "";
-	itinerary_name = "";
+	itinerary_name = "Your Itinerary";
 	results = [];
 	for (var i = 0; i < mapSearch.length; i++) {
 		mapSearch[i].setMap(null);
@@ -220,31 +248,9 @@ save_button.click(function() {
 	for (var i = 0; i < itineraries.length; i++) {
 		$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>")
 	}
+	store(itineraries);
+	createNewItinerary();
 });
-/*
-function refreshItinerary() {
-	var new_itinerary = [];
-	var new_markers = [];
-	var venue = $('#itinerary-panel');
-	for (var i = 0; i < itinerary.length; i++) {
-		venue = venue.next();
-		var id = venue.attr('id');
-		var index = id.replace( /^\D+/g, '');
-		new_itinerary[i] = itinerary[index];
-		new_markers[i] = itineraryMarkers[index];
-		venue.attr("id", "itinerary" + i);
-		venue.html("<div><h4 style=\"display:inline;\">" + new_itinerary[i].name + "</h4><span class=\"label label-info pull-right\">" + new_itinerary[i].rating + "</span></div><div><h6 style=\"display:inline;\">" + new_itinerary[i].location + "</h6><h6 class=\"pull-right\" id=\"hideForRemoveButton" + i + "\">"  + new_itinerary[i].hours + "</h6><button style=\"display:none;\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"removeFromItinerary(" + i + ")\" id=\"removeitinerary" + i + "\" type=\"button\"><span class=\"glyphicon glyphicon-remove\"></span></button></div><h6 style=\"margin-top:3px;\">" + new_itinerary[i].contact + "</h6>");
-	}
-	itinerary = [];
-	itineraryMarkers = [];
-	for (var i = 0; i < new_itinerary.length; i++) {
-		itinerary[i] = new_itinerary[i];
-		itineraryMarkers[i] = new_markers[i];
-	}
-	drawLines(map);
-	drawMarkers(map);
-}
-*/
 
 // Drag functionality.
 $(function () {
@@ -258,7 +264,56 @@ $(function () {
     });
 });
 
+//adds array of itineraries to local storage
+function store(itin) {
+	var simpleitineraries = [];
+	for (var i = 0; i < itin.length; i++) {
+		var new_itinerary = {};
+		new_itinerary.name = itin[i].name;
+		new_itinerary.schedule = itin[i].schedule;
+		simpleitineraries.push(new_itinerary);
+	}
+	localStorage.setItem('itinerary', JSON.stringify(simpleitineraries));
+}
+//reads array of itinieraries from local storage
+function recreate() {
+	if (localStorage.getItem('itinerary') !== null) {
+		var simpleitineraries = JSON.parse(localStorage.getItem('itinerary'));
+		console.log(simpleitineraries.length);
+		for (var i = 0; i < simpleitineraries.length; i++) {
+			var venues = simpleitineraries[i].schedule;
+			var newmarkers = [];
+			var newinfo = [];
+			for (var j = 0; j < simpleitineraries[i].schedule.length; j++) {
+				var newLatlng = new google.maps.LatLng(venues[j].lat,venues[j].long);
+				// To add the marker to the map, use the 'map' property
+				var marker = new google.maps.Marker({
+					position: newLatlng,
+					title: venues[j].name
+				});
+				newmarkers[j] = marker;
+				var content_string = "<div class=\"list-group-item\"><h4 class=\"text-center\">" + venues[j].name + "</h4><h6 class=\"text-center\">" + venues[j].location + "</h6><h6 class=\"text-center\">" + venues[j].contact + "</h6><h6 class=\"text-center\">" + venues[j].hours + "</h6><h6 class=\"text-center\">" + venues[j].category + "</h6><button onclick=\"mapButton("+j+")\" id=\"addbutton" + j + "\"  type=\"button\" class=\"btn btn-info btn-lg btn-block\">Add</button></div>";
+
+				var infowindow = new google.maps.InfoWindow({
+					content: content_string,
+					maxWidth: 1000
+				});
+				newinfo[j] = infowindow;
+			}
+			simpleitineraries[i].markers = newmarkers;
+			simpleitineraries[i].info = newinfo;
+		}
+		return simpleitineraries;
+	} else {
+		return null;
+	}
+}
+
 });
+
+function delete_storage() {
+	localStorage.removeItem('itinerary');
+}
 
 // Load itineraries into the itinerary page.
 //function loadItineraries() {
@@ -270,6 +325,9 @@ $(function () {
 
 // Reload itinerary into the itinerary page.
 function reloadItinerary(index) {
+	createNewItinerary();
+	isNewItinerary = false;
+	currItinerary = index;
 	itinerary = itineraries[index].schedule;
 	itineraryMarkers = itineraries[index].markers;
 	itinerary_name = itineraries[index].name;
@@ -277,6 +335,8 @@ function reloadItinerary(index) {
 	$('#name-input').hide();
 	$('#itinerary-title').html(itinerary_name);
 	$('#save-itinerary').show();
+	map.setZoom(14);
+	map.panTo(itineraryMarkers[0].getPosition());
 	drawMarkers(map);
 	drawLines(map);
 	for (var i = 0; i < itinerary.length; i++) {
@@ -379,6 +439,39 @@ function hideRemoveButton(event) {
 	var toShow = "#hideForRemoveButton" + idx;
 	$(toHide).hide();
 	$(toShow).show();
+}
+
+function createNewItinerary() {
+	isNewItinerary = true;
+	currItinerary = -1;
+	itinerary = [];
+	for (var i = 0; i < itineraryMarkers.length; i++) {
+		itineraryMarkers[i].setMap(null);
+	}
+	itineraryMarkers = [];
+	itineraryInfo = [];
+	query_txt = "";
+	location_text = "";
+	itinerary_name = "Your Itinerary";
+	results = [];
+	for (var i = 0; i < mapSearch.length; i++) {
+		mapSearch[i].setMap(null);
+	}
+	for (var i = 0; i < mapPaths.length; i++) {
+		mapPaths[i].setMap(null);
+	}
+	mapSearch = [];
+	mapPaths = [];
+	$('#name-input').show();
+	$('#itinerary-title').html("My Itinerary");
+	$('#results').html("");
+	$('#search-panel').html("Search for a new destination!");
+	$('#itinerary').html("<div id=\"itinerary-panel\" class=\"panel panel-info\"><div class=\"panel-heading\"><h3 class=\"panel-title\">Add a New Destination!</h3></div></div>");
+	$('#save-itinerary').hide();
+	$('#itinerary-dropdown').html("");
+	for (var i = 0; i < itineraries.length; i++) {
+		$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>")
+	}
 }
 
 function mapButton(index) {

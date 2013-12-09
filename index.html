@@ -28,7 +28,7 @@
     <div class="container">
       <div class="header">
         <ul class="nav nav-pills pull-right">
-          <li><a href="#">Create an Itinerary</a></li>
+          <li><a onclick="createNewItinerary()">Create an Itinerary</a></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Itineraries<b class="caret"></b></a>
             <ul id="itinerary-dropdown" class="dropdown-menu">
@@ -89,7 +89,8 @@
           <br>
             <div class="panel panel-info">
               <div class="panel-heading">
-                <h3 id="search-panel" class="panel-title">Search for a new destination!</h3>
+                <h3 style="display:inline;" id="search-panel" class="panel-title">Search for a new destination!</h3>
+                <img id="loader" style="width:4%;display:none;" class="pull-right" src="assets/load.gif">
               </div>
             </div>
           <div id="results" class="list-group" style="overflow:auto; height:400px;">
