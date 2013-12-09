@@ -477,12 +477,19 @@ function createNewItinerary() {
 function mapButton(index) {
 	var venue = results[index];
 	var added = false;
-	for (var i = 0; i < itinerary.length; i++) {
-		if (venue == itinerary[i]) {
-			added = true;
+	var novenue = false;
+	if (venue == undefined) {
+		added = true;
+		novenue = true;
+	} else {
+		for (var i = 0; i < itinerary.length; i++) {
+			if (venue.name == itinerary[i].name) {
+				if (venue.location == itinerary[i].location) {
+					added = true;
+				}
+			}
 		}
 	}
-
 	if(!added) {
 		for (var i = 0; i < infowindows.length; i++) {
 			infowindows[i].close();
@@ -513,6 +520,9 @@ function mapButton(index) {
 
 		addItinerary(map, results[index], mapSearch[index]);
 	} else {
+		if (novenue) {
+			itineraryInfo[index].close();
+		}
 		infowindows[index].close();
 	}
 }
