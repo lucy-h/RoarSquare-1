@@ -506,6 +506,9 @@ function createNewItinerary() {
 	}
 	mapSearch = [];
 	mapPaths = [];
+	$('#query').val("");
+	$('#location').val("");
+	$('#itinerary-name').val("");
 	$('#name-input').show();
 	$('#itinerary-title').html("My Itinerary");
 	$('#results').html("");
@@ -519,6 +522,8 @@ function createNewItinerary() {
 			$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>");
 		}
 	}
+	$(document).scrollTop( $("#header").height() +  $("#map-canvas").height());
+
 }
 
 function mapButton(index) {
