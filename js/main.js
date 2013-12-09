@@ -477,10 +477,8 @@ function createNewItinerary() {
 function mapButton(index) {
 	var venue = results[index];
 	var added = false;
-	var novenue = false;
 	if (venue == undefined) {
 		added = true;
-		novenue = true;
 	} else {
 		for (var i = 0; i < itinerary.length; i++) {
 			if (venue.name == itinerary[i].name) {
@@ -520,10 +518,12 @@ function mapButton(index) {
 
 		addItinerary(map, results[index], mapSearch[index]);
 	} else {
-		if (novenue) {
-			itineraryInfo[index].close();
+		for (var i = 0; i < infowindows.length; i++) {
+			infowindows[i].close();
 		}
-		infowindows[index].close();
+		for (var i = 0; i < itineraryInfo.length; i++) {
+			itineraryInfo[i].close();
+		}
 	}
 }
 
