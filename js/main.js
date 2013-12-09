@@ -244,6 +244,7 @@ save_button.click(function() {
 	$('#search-panel').html("Search for a new destination!");
 	$('#itinerary').html("<div id=\"itinerary-panel\" class=\"panel panel-info\"><div class=\"panel-heading\"><h3 class=\"panel-title\">Add a New Destination!</h3></div></div>");
 	$('#save-itinerary').hide();
+	$('#delete-itinerary').hide();
 	$('#itinerary-dropdown').html("");
 	for (var i = 0; i < itineraries.length; i++) {
 		$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>")
@@ -251,6 +252,18 @@ save_button.click(function() {
 	store(itineraries);
 	createNewItinerary();
 });
+
+// Function to delete itinerary.
+var delete_button = $('#delete-itinerary');
+delete_button.click(function() {
+	if (isNewItinerary) {
+		createNewItinerary();
+	} else {
+		itineraries.splice(currItinerary, 1);
+		store(itineraries);
+		createNewItinerary();
+	}
+})
 
 // Drag functionality.
 $(function () {
@@ -335,6 +348,8 @@ function reloadItinerary(index) {
 	$('#name-input').hide();
 	$('#itinerary-title').html(itinerary_name);
 	$('#save-itinerary').show();
+	$('#delete-itinerary').show();
+	$('#itinerary-panel').hide();
 	map.setZoom(14);
 	map.panTo(itineraryMarkers[0].getPosition());
 	drawMarkers(map);
@@ -418,6 +433,7 @@ function drawMarkers(map) {
 function addItinerary(map, venue, marker) {
 	$('#itinerary-panel').hide();
 	$('#save-itinerary').show();
+	$('#delete-itinerary').show();
 	itineraryMarkers.push(marker);
 	drawMarkers(map);
 	drawLines(map);
@@ -468,6 +484,7 @@ function createNewItinerary() {
 	$('#search-panel').html("Search for a new destination!");
 	$('#itinerary').html("<div id=\"itinerary-panel\" class=\"panel panel-info\"><div class=\"panel-heading\"><h3 class=\"panel-title\">Add a New Destination!</h3></div></div>");
 	$('#save-itinerary').hide();
+	$('#delete-itinerary').hide();
 	$('#itinerary-dropdown').html("");
 	for (var i = 0; i < itineraries.length; i++) {
 		$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>")
@@ -576,6 +593,11 @@ function refreshItinerary() {
 	}
 	drawLines(map);
 	drawMarkers(map);
+	if (itinerary.length == 0) {
+		$('#itinerary-panel').show();
+		$('#save-itinerary').hide();
+		$('#delete-itinerary').hide();
+	}
 }
 
 function removeFromItinerary(index) {
