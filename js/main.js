@@ -477,9 +477,9 @@ function createNewItinerary() {
 	$('#save-itinerary').hide();
 	$('#delete-itinerary').hide();
 	if (itineraries.length > 0) {
-	$('#itinerary-dropdown').html("");
+		$('#itinerary-dropdown').html("");
 		for (var i = 0; i < itineraries.length; i++) {
-			$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>")
+			$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>");
 		}
 	}
 }
