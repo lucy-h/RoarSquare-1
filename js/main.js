@@ -233,7 +233,7 @@ save_button.click(function() {
 	$('#itinerary-title').html("My Itinerary");
 	$('#results').html("");
 	$('#search-panel').html("Search for a new destination!");
-	$('#itinerary').html("<div id=\"itinerary-panel\" class=\"panel panel-info\"><div class=\"panel-heading\"><h3 class=\"panel-title\">Add a New Destination!</h3></div></div>");
+	$('#itinerary').html("<div id=\"itinerary-panel\" class=\"panel panel-info\"><div class=\"panel-heading\"><h3 id=\"panel-name\" class=\"panel-title\">Add a New Destination!</h3></div></div>");
 	$('#save-itinerary').hide();
 	$('#delete-itinerary').hide();
 	$('#itinerary-dropdown').html("");
@@ -242,6 +242,10 @@ save_button.click(function() {
 	}
 	store(itineraries);
 	createNewItinerary();
+	$('#itinerary-panel').removeClass("panel-info");
+	$('#itinerary-panel').addClass("panel-success");
+	$('#panel-name').html("Itinerary Saved!");
+	$('#itinerary-panel').delay(1000).fadeOut(300).queue(function(n) { $('#panel-name').html("Add a New Destination!"); $('#itinerary-panel').addClass("panel-info"); $('#itinerary-panel').removeClass("panel-success"); n();}).fadeIn(300);
 });
 
 // Function to delete itinerary.
@@ -254,6 +258,10 @@ delete_button.click(function() {
 		store(itineraries);
 		createNewItinerary();
 	}
+	$('#itinerary-panel').removeClass("panel-info");
+	$('#itinerary-panel').addClass("panel-danger");
+	$('#panel-name').html("Itinerary Deleted!");
+	$('#itinerary-panel').delay(1000).fadeOut(300).queue(function(n) { $('#panel-name').html("Add a New Destination!"); $('#itinerary-panel').addClass("panel-info"); $('#itinerary-panel').removeClass("panel-danger"); n();}).fadeIn(300);
 })
 
 // Drag functionality.
@@ -473,7 +481,7 @@ function createNewItinerary() {
 	$('#itinerary-title').html("My Itinerary");
 	$('#results').html("");
 	$('#search-panel').html("Search for a new destination!");
-	$('#itinerary').html("<div id=\"itinerary-panel\" class=\"panel panel-info\"><div class=\"panel-heading\"><h3 class=\"panel-title\">Add a New Destination!</h3></div></div>");
+	$('#itinerary').html("<div id=\"itinerary-panel\" class=\"panel panel-info\"><div class=\"panel-heading\"><h3 id=\"panel-name\" class=\"panel-title\">Add a New Destination!</h3></div></div>");
 	$('#save-itinerary').hide();
 	$('#delete-itinerary').hide();
 	if (itineraries.length > 0) {
