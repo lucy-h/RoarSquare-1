@@ -164,10 +164,38 @@ search_button.click(function() {
 				//console.log(data["response"]["groups"][0]["items"]);
 				//console.log(results[0].hours);
 			} else {
+				$('#result-panel').removeClass("panel-info");
+				$('#result-panel').addClass("panel-danger");
 				$('#search-panel').html("Please try a different search!");
+				$('#result-panel').fadeOut(500).fadeIn(500);
+				$('#results').html("");
+				for (var i = 0; i < mapSearch.length; i++) {
+					mapSearch[i].setMap(null);
+				}
+				mapSearch = [];
+				results = [];
+				infowindows = [];
+				$('#query').val("");
+				$('#location').val("");
+				$('#search-panel').html("Search for a new destination!");
+				drawMarkers(map);
 			}
 		} else {
+			$('#result-panel').removeClass("panel-info");
+			$('#result-panel').addClass("panel-danger");
 			$('#search-panel').html("Failed to connect to FourSquare!");
+			$('#result-panel').fadeOut(500).fadeIn(500);
+			$('#results').html("");
+			for (var i = 0; i < mapSearch.length; i++) {
+				mapSearch[i].setMap(null);
+			}
+			mapSearch = [];
+			results = [];
+			infowindows = [];
+			$('#query').val("");
+			$('#location').val("");
+			$('#search-panel').html("Search for a new destination!");
+			drawMarkers(map);
 		}
 	});
 
