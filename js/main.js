@@ -9,7 +9,8 @@ var results = [];
 var mapSearch = [];
 var mapPaths = [];
 var map;
-var infowindows;
+var infowindows = [];
+var itineraryInfo = [];
 
 // Constants
 var MAX_QUERY_SIZE = 15;
@@ -115,7 +116,7 @@ function addToMap(venues) {
 		mapSearch[i] = marker;
 		mapSearch[i].setMap(map);
 
-		var content_string = "<a href=\"#\" class=\"list-group-item\"><h4 class=\"text-center\">" + venues[i].name + "</h4><h6 class=\"text-center\">" + venues[i].location + "</h6><h6 class=\"text-center\">" + venues[i].contact + "</h6><h6 class=\"text-center\">" + venues[i].hours + "</h6><h6 class=\"text-center\">" + venues[i].category + "</h6><button onclick=\"mapButton("+i+")\" id=\"addbutton" + i + "\"  type=\"button\" class=\"btn btn-info btn-lg btn-block\">Add</button></a>";
+		var content_string = "<div class=\"list-group-item\"><h4 class=\"text-center\">" + venues[i].name + "</h4><h6 class=\"text-center\">" + venues[i].location + "</h6><h6 class=\"text-center\">" + venues[i].contact + "</h6><h6 class=\"text-center\">" + venues[i].hours + "</h6><h6 class=\"text-center\">" + venues[i].category + "</h6><button onclick=\"mapButton("+i+")\" id=\"addbutton" + i + "\"  type=\"button\" class=\"btn btn-info btn-lg btn-block\">Add</button></div>";
 
 		var infowindow = new google.maps.InfoWindow({
 			content: content_string,
@@ -189,12 +190,14 @@ save_button.click(function() {
 	new_itinerary.name = itinerary_name;
 	new_itinerary.schedule = itinerary;
 	new_itinerary.markers = itineraryMarkers;
+	new_itinerary.info = itineraryInfo;
 	itineraries.push(new_itinerary);
 	itinerary = [];
 	for (var i = 0; i < itineraryMarkers.length; i++) {
 		itineraryMarkers[i].setMap(null);
 	}
 	itineraryMarkers = [];
+	itineraryInfo = [];
 	query_txt = "";
 	location_text = "";
 	itinerary_name = "";
@@ -207,12 +210,18 @@ save_button.click(function() {
 	}
 	mapSearch = [];
 	mapPaths = [];
+	$('#name-input').show();
+	$('#itinerary-title').html("My Itinerary");
 	$('#results').html("");
 	$('#search-panel').html("Search for a new destination!");
 	$('#itinerary').html("<div id=\"itinerary-panel\" class=\"panel panel-info\"><div class=\"panel-heading\"><h3 class=\"panel-title\">Add a New Destination!</h3></div></div>");
 	$('#save-itinerary').hide();
+	$('#itinerary-dropdown').html("");
+	for (var i = 0; i < itineraries.length; i++) {
+		$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>")
+	}
 });
-
+/*
 function refreshItinerary() {
 	var new_itinerary = [];
 	var new_markers = [];
@@ -235,6 +244,7 @@ function refreshItinerary() {
 	drawLines(map);
 	drawMarkers(map);
 }
+*/
 
 // Drag functionality.
 $(function () {
@@ -244,11 +254,61 @@ $(function () {
         forceHelperSize: true,
         update: function(event, ui) {
 			refreshItinerary();
-        }
+        },
     });
 });
 
 });
+
+// Load itineraries into the itinerary page.
+//function loadItineraries() {
+//	console.log(itineraries.length);
+//	for (var i = 0; i < itineraries.length; i++) {
+//		$('#main-jumbotron').append("<button id=\"itinerary" + i + "\" class=\"btn btn-primary btn-lg btn-block\">"+ itineraries[i].name +"</button>");
+//	}
+//}
+
+// Reload itinerary into the itinerary page.
+function reloadItinerary(index) {
+	itinerary = itineraries[index].schedule;
+	itineraryMarkers = itineraries[index].markers;
+	itinerary_name = itineraries[index].name;
+	itineraryInfo = itineraries[index].info;
+	$('#name-input').hide();
+	$('#itinerary-title').html(itinerary_name);
+	$('#save-itinerary').show();
+	drawMarkers(map);
+	drawLines(map);
+	for (var i = 0; i < itinerary.length; i++) {
+		$('#itinerary').append("<a href=\"#\" class=\"list-group-item\" id=\"itinerary" + i + "\">" + "<div><h4 style=\"display:inline;\">" + itinerary[i].name + "</h4><span class=\"label label-info pull-right\">" + itinerary[i].rating + "</span></div><div><h6 style=\"display:inline;\">" + itinerary[i].location + "</h6><h6 class=\"pull-right\" id=\"hideForRemoveButton" + i + "\">"  + itinerary[i].hours + "</h6><button style=\"display:none;\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"removeFromItinerary(" + i + ")\" id=\"removeitinerary" + i + "\" type=\"button\"><span class=\"glyphicon glyphicon-remove\"></span></button></div><h6 style=\"margin-top:3px;\">" + itinerary[i].contact + "</h6>" + "</a>");
+		var name = "#itinerary" + i;
+		$(name).hover(function(event) {
+				showRemoveButton(event);
+			}, function(event) {
+				hideRemoveButton(event);
+			}
+		);
+
+		google.maps.event.addListener(itineraryMarkers[i], 'click', function(innerKey) {
+			return function() {
+				for (var i = 0; i < itineraryInfo.length; i++) {
+					itineraryInfo[i].close();
+				}
+				itineraryInfo[innerKey].open(map, itineraryMarkers[innerKey]);
+			};
+		}(i));
+
+		var name = "#itinerary" + i;
+		$(name).click(function(key) {
+			return function() {
+				for (var i = 0; i < itineraryInfo.length; i++) {
+					itineraryInfo[i].close();
+				}
+				itineraryInfo[key].open(map, itineraryMarkers[key]);
+			}
+		}(i));
+	}
+}
 
 // Fill map with path.
 function drawLines(map) {
@@ -335,6 +395,7 @@ function mapButton(index) {
 			infowindows[i].close();
 		}
 		itinerary.push(results[index]);
+		itineraryInfo.push(infowindows[index]);
 
 		$('#itinerary').append("<a href=\"#\" class=\"list-group-item\" id=\"itinerary" + (itinerary.length - 1) + "\">" + "<div><h4 style=\"display:inline;\">" + results[index].name + "</h4><span class=\"label label-info pull-right\">" + results[index].rating + "</span></div><div><h6 style=\"display:inline;\">" + results[index].location + "</h6><h6 class=\"pull-right\" id=\"hideForRemoveButton" + (itinerary.length - 1) + "\">"  + results[index].hours + "</h6><button style=\"display:none;\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"removeFromItinerary(" + (itinerary.length - 1) + ")\" id=\"removeitinerary" + (itinerary.length - 1) + "\" type=\"button\"><span class=\"glyphicon glyphicon-remove\"></span></button></div><h6 style=\"margin-top:3px;\">" + results[index].contact + "</h6>" + "</a>");
 		
@@ -347,6 +408,16 @@ function mapButton(index) {
 			}
 		);
 
+		name = "#itinerary" + (itinerary.length - 1);
+		$(name).click(function(key) {
+			return function() {
+				for (var i = 0; i < itineraryInfo.length; i++) {
+					itineraryInfo[i].close();
+				}
+				itineraryInfo[key].open(map, itineraryMarkers[key]);
+			}
+		}(itinerary.length - 1));
+
 		addItinerary(map, results[index], mapSearch[index]);
 	} else {
 		infowindows[index].close();
@@ -356,6 +427,7 @@ function mapButton(index) {
 function refreshItinerary() {
 	var new_itinerary = [];
 	var new_markers = [];
+	var new_infowindows = [];
 	var venue = $('#itinerary-panel');
 	var i = 0;
 	while (venue.next().length) {
@@ -364,6 +436,7 @@ function refreshItinerary() {
 		var index = id.replace( /^\D+/g, '');
 		new_itinerary[i] = itinerary[index];
 		new_markers[i] = itineraryMarkers[index];
+		new_infowindows[i] = itineraryInfo[index];
 		venue.attr("id", "itinerary" + i);
 		venue.html("<div><h4 style=\"display:inline;\">" + new_itinerary[i].name + "</h4><span class=\"label label-info pull-right\">" + new_itinerary[i].rating + "</span></div><div><h6 style=\"display:inline;\">" + new_itinerary[i].location + "</h6><h6 class=\"pull-right\" id=\"hideForRemoveButton" + i + "\">"  + new_itinerary[i].hours + "</h6><button style=\"display:none;\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"removeFromItinerary(" + i + ")\" id=\"removeitinerary" + i + "\" type=\"button\"><span class=\"glyphicon glyphicon-remove\"></span></button></div><h6 style=\"margin-top:3px;\">" + new_itinerary[i].contact + "</h6>");
 		i++;
@@ -373,9 +446,30 @@ function refreshItinerary() {
 	}
 	itinerary = [];
 	itineraryMarkers = [];
+	itineraryInfo = [];
 	for (var i = 0; i < new_itinerary.length; i++) {
 		itinerary[i] = new_itinerary[i];
 		itineraryMarkers[i] = new_markers[i];
+		itineraryInfo[i] = new_infowindows[i];
+
+		google.maps.event.addListener(itineraryMarkers[i], 'click', function(innerKey) {
+			return function() {
+				for (var i = 0; i < itineraryInfo.length; i++) {
+					itineraryInfo[i].close();
+				}
+				itineraryInfo[innerKey].open(map, itineraryMarkers[innerKey]);
+			};
+		}(i));
+
+		var name = "#itinerary" + i;
+		$(name).click(function(key) {
+			return function() {
+				for (var i = 0; i < itineraryInfo.length; i++) {
+					itineraryInfo[i].close();
+				}
+				itineraryInfo[key].open(map, itineraryMarkers[key]);
+			}
+		}(i));
 	}
 	drawLines(map);
 	drawMarkers(map);
