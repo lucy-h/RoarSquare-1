@@ -46,7 +46,8 @@ if (itineraries) {
 function initialize() {
 	var mapOptions = {
 		center: new google.maps.LatLng(40.67, -73.94),
-		zoom: 10
+		zoom: 10,
+		scrollwheel: false
 	};
 	map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 }
