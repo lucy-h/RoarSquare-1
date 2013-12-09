@@ -32,15 +32,6 @@ Venue Object
 $( document ).ready(function() {
 
 itineraries = recreate();
-if (itineraries !== null) {
-	for (var i = 0; i < itineraries.length; i++) {
-		$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>")
-	}
-} else {
-	itineraries = [];
-}
-
-console.log(itineraries);
 
 if (itineraries) {
 	for (var i = 0; i < itineraries.length; i++) {
@@ -485,9 +476,11 @@ function createNewItinerary() {
 	$('#itinerary').html("<div id=\"itinerary-panel\" class=\"panel panel-info\"><div class=\"panel-heading\"><h3 class=\"panel-title\">Add a New Destination!</h3></div></div>");
 	$('#save-itinerary').hide();
 	$('#delete-itinerary').hide();
+	if (itineraries.length > 0) {
 	$('#itinerary-dropdown').html("");
-	for (var i = 0; i < itineraries.length; i++) {
-		$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>")
+		for (var i = 0; i < itineraries.length; i++) {
+			$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>")
+		}
 	}
 }
 
