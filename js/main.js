@@ -145,7 +145,6 @@ function addToMap(venues) {
 				}
 				infowindows[innerKey].open(map, mapSearch[innerKey]);
 			};
-			//console.log(i);
 		}(i));
 	}
 }
@@ -349,7 +348,6 @@ function store(itin) {
 function recreate() {
 	if (localStorage.getItem('itinerary') !== null) {
 		var simpleitineraries = JSON.parse(localStorage.getItem('itinerary'));
-		console.log(simpleitineraries.length);
 		for (var i = 0; i < simpleitineraries.length; i++) {
 			var venues = simpleitineraries[i].schedule;
 			var newmarkers = [];
@@ -385,7 +383,9 @@ if(window.location.search.length > 0){
 	var query = window.location.search.substring(1);
 	var pair = query.split("=");
 	var indexOfParameter = pair[1];
-	if (indexOfParameter > -1) {	
+	if (indexOfParameter > -1) {
+		itineraries = recreate();
+		initialize();
 		reloadItinerary(indexOfParameter);
 	}
 }
@@ -408,10 +408,10 @@ function reloadItinerary(index) {
 	// If user is trying to load an itinerary from the
 	// "start" page, you need to first redirect to index.html
 	// Pass the itinerary index as a parameter
+
 	if(window.location.href.indexOf("start.html") > -1) {
 		window.location.replace("index.html?itin="+index);
 	}
-
 	createNewItinerary();
 	isNewItinerary = false;
 	currItinerary = index;
