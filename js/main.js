@@ -223,9 +223,15 @@ remove_button.click(function() {
 var name_button = $('#name-button');
 name_button.click(function() {
 	itinerary_name = $('#itinerary-name').val();
-	$('#name-input').hide();
-	$('#itinerary-title').html(itinerary_name);
-	$('#itinerary-title-group').show();
+	if(itinerary_name == "") {
+		$('#name-input').addClass('has-error');
+		$('#itinerary-name').attr('placeholder', "Sorry, name cannot be blank");
+	}
+	else {
+		$('#name-input').hide();
+		$('#itinerary-title').html(itinerary_name);
+		$('#itinerary-title-group').show();
+	}
 });
 
 var edit_name_button = $('#edit-name-button');
@@ -513,9 +519,12 @@ function createNewItinerary() {
 	}
 	mapSearch = [];
 	mapPaths = [];
+	
+	//Clear input fields
 	$('#query').val("");
 	$('#location').val("");
 	$('#itinerary-name').val("");
+
 	$('#itinerary-title-group').hide();
 	$('#name-input').show();
 	$('#itinerary-name').focus();
@@ -531,6 +540,7 @@ function createNewItinerary() {
 			$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>");
 		}
 	}
+	//scroll to itinerary when a new itinerary is created	
 	$(document).scrollTop( $("#header").height() +  $("#map-canvas").height());
 
 }
@@ -658,6 +668,9 @@ function removeFromItinerary(index) {
 }
 
 function changeName() {
+	$('#name-input').removeClass('has-error');
+	$('#itinerary-name').attr('placeholder', "Name this itinerary");
+
 	$('#itinerary-title-group').hide();
 	$('#name-input').show();
 	$('itinerary-name').val(itinerary_name);
