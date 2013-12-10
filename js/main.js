@@ -317,7 +317,7 @@ delete_button.click(function() {
 	$('#itinerary-panel').removeClass("panel-info");
 	$('#itinerary-panel').addClass("panel-danger");
 	$('#panel-name').html("Itinerary Deleted!");
-	$('#delete-alert').alert('close');	
+	$('#delete-alert').hide();	
 	$('#itinerary-panel').delay(1000).fadeOut(300).queue(function(n) { $('#panel-name').html("Add a New Destination!"); $('#itinerary-panel').addClass("panel-info"); $('#itinerary-panel').removeClass("panel-danger"); n();}).fadeIn(300);
 });
 
