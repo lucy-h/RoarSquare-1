@@ -379,6 +379,16 @@ function recreate() {
 	}
 }
 
+// If the url contains an itinerary index parameter
+// reload that itinerary
+if(window.location.search.length > 0){
+	var query = window.location.search.substring(1);
+	var pair = query.split("=");
+	var indexOfParameter = pair[1];
+	if (indexOfParameter > -1) {	
+		reloadItinerary(indexOfParameter);
+	}
+}
 });
 
 function delete_storage() {
@@ -395,6 +405,13 @@ function delete_storage() {
 
 // Reload itinerary into the itinerary page.
 function reloadItinerary(index) {
+	// If user is trying to load an itinerary from the
+	// "start" page, you need to first redirect to index.html
+	// Pass the itinerary index as a parameter
+	if(window.location.href.indexOf("start.html") > -1) {
+		window.location.replace("index.html?itin="+index);
+	}
+
 	createNewItinerary();
 	isNewItinerary = false;
 	currItinerary = index;
