@@ -224,6 +224,7 @@ var name_button = $('#name-button');
 name_button.click(function() {
 	itinerary_name = $('#itinerary-name').val();
 	if(itinerary_name == "") {
+		//name shouldn't be empty
 		$('#name-input').addClass('has-error');
 		$('#itinerary-name').attr('placeholder', "Sorry, name cannot be blank");
 	}
@@ -276,7 +277,7 @@ save_button.click(function() {
 	$('#search-panel').html("Search for a new destination!");
 	$('#itinerary').html("<div id=\"itinerary-panel\" class=\"panel panel-info\"><div class=\"panel-heading\"><h3 id=\"panel-name\" class=\"panel-title\">Add a New Destination!</h3></div></div>");
 	$('#save-itinerary').hide();
-	$('#delete-itinerary').hide();
+	$('#delete-itinerary-confirm').hide();
 	$('#itinerary-dropdown').html("");
 	for (var i = 0; i < itineraries.length; i++) {
 		$('#itinerary-dropdown').append("<li><a id=\"saveditinerary" + i + "\" onclick=\"reloadItinerary(" + i + ")\">"+ itineraries[i].name + "</a></li>")
@@ -289,9 +290,24 @@ save_button.click(function() {
 	$('#itinerary-panel').delay(1000).fadeOut(300).queue(function(n) { $('#panel-name').html("Add a New Destination!"); $('#itinerary-panel').addClass("panel-info"); $('#itinerary-panel').removeClass("panel-success"); n();}).fadeIn(300);
 });
 
+//Function to confirm delete
+var delete_confirm = $('#delete-itinerary-confirm');
+delete_confirm.click(function () {
+	$('#delete-itinerary-confirm').hide();
+	$('#delete-alert').show();
+});
+
+//cancel delete
+$('#cancel-delete').click(function() {
+	$('#delete-alert').hide();
+	$('#delete-itinerary-confirm').show();
+
+});
+
 // Function to delete itinerary.
 var delete_button = $('#delete-itinerary');
 delete_button.click(function() {
+
 	if (isNewItinerary) {
 		createNewItinerary();
 	} else {
@@ -302,8 +318,9 @@ delete_button.click(function() {
 	$('#itinerary-panel').removeClass("panel-info");
 	$('#itinerary-panel').addClass("panel-danger");
 	$('#panel-name').html("Itinerary Deleted!");
+	$('#delete-alert').alert('close');	
 	$('#itinerary-panel').delay(1000).fadeOut(300).queue(function(n) { $('#panel-name').html("Add a New Destination!"); $('#itinerary-panel').addClass("panel-info"); $('#itinerary-panel').removeClass("panel-danger"); n();}).fadeIn(300);
-})
+});
 
 // Drag functionality.
 $(function () {
@@ -389,7 +406,7 @@ function reloadItinerary(index) {
 	$('#name-input').hide();
 	$('#itinerary-title').html(itinerary_name);
 	$('#save-itinerary').show();
-	$('#delete-itinerary').show();
+	$('#delete-itinerary-confirm').show();
 	$('#itinerary-panel').hide();
 	map.setZoom(14);
 	map.panTo(itineraryMarkers[0].getPosition());
@@ -474,7 +491,7 @@ function drawMarkers(map) {
 function addItinerary(map, venue, marker) {
 	$('#itinerary-panel').hide();
 	$('#save-itinerary').show();
-	$('#delete-itinerary').show();
+	$('#delete-itinerary-confirm').show();
 	itineraryMarkers.push(marker);
 	drawMarkers(map);
 	drawLines(map);
@@ -533,7 +550,7 @@ function createNewItinerary() {
 	$('#search-panel').html("Search for a new destination!");
 	$('#itinerary').html("<div id=\"itinerary-panel\" class=\"panel panel-info\"><div class=\"panel-heading\"><h3 id=\"panel-name\" class=\"panel-title\">Add a New Destination!</h3></div></div>");
 	$('#save-itinerary').hide();
-	$('#delete-itinerary').hide();
+	$('#delete-itinerary-confirm').hide();
 	if (itineraries.length > 0) {
 		$('#itinerary-dropdown').html("");
 		for (var i = 0; i < itineraries.length; i++) {
@@ -650,7 +667,7 @@ function refreshItinerary() {
 	if (itinerary.length == 0) {
 		$('#itinerary-panel').show();
 		$('#save-itinerary').hide();
-		$('#delete-itinerary').hide();
+		$('#delete-itinerary-confirm').hide();
 	}
 }
 

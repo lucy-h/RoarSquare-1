@@ -28,11 +28,11 @@
     <div class="container">
       <div class="header">
         <ul class="nav nav-pills pull-right">
-          <li><a href="#" onclick="createNewItinerary();return false;">Create an Itinerary</a></li>
+          <li><a href="#" onclick="createNewItinerary();event.preventDefault();">Create an Itinerary</a></li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Itineraries<b class="caret"></b></a>
             <ul id="itinerary-dropdown" class="dropdown-menu">
-              <li><a href="#">Make an itinerary!</a></li>
+              <li><a href="#" onclick="createNewItinerary();event.preventDefault();">Make an itinerary!</a></li>
             </ul>
           </li>
         </ul>
@@ -71,7 +71,13 @@
             </div>
           </ul>
         <button id="save-itinerary" style="display:none;" class="btn btn-primary btn-md btn-block">Save Itinerary</button>
-        <button id="delete-itinerary" style="display:none;" class="btn btn-danger btn-md btn-block">Delete Itinerary</button>
+        <button id="delete-itinerary-confirm" style="display:none;" class="btn btn-danger btn-md btn-block">Delete Itinerary</button>
+        <div id="delete-alert"class="alert alert-danger fade in" style="display:none">
+          <p>Are you sure you want to delete? Deleting is permanent. </p> 
+          <p>
+            <button type='button' id='delete-itinerary' class='btn btn-danger'>Yes</button>
+            <button type='button' id='cancel-delete' class='btn btn-default'>No</button></p>
+        </div>
         </div>
 
         <!-- Search Taskbar -->
