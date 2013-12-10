@@ -225,6 +225,12 @@ name_button.click(function() {
 	itinerary_name = $('#itinerary-name').val();
 	$('#name-input').hide();
 	$('#itinerary-title').html(itinerary_name);
+	$('#itinerary-title-group').show();
+});
+
+var edit_name_button = $('#edit-name-button');
+edit_name_button.click(function() {
+	changeName();
 });
 
 // Function to save entire itinerary.
@@ -373,6 +379,7 @@ function reloadItinerary(index) {
 	itineraryMarkers = itineraries[index].markers;
 	itinerary_name = itineraries[index].name;
 	itineraryInfo = itineraries[index].info;
+	$('#itinerary-title-group').show();
 	$('#name-input').hide();
 	$('#itinerary-title').html(itinerary_name);
 	$('#save-itinerary').show();
@@ -509,7 +516,9 @@ function createNewItinerary() {
 	$('#query').val("");
 	$('#location').val("");
 	$('#itinerary-name').val("");
+	$('#itinerary-title-group').hide();
 	$('#name-input').show();
+	$('#itinerary-name').focus();
 	$('#itinerary-title').html("My Itinerary");
 	$('#results').html("");
 	$('#search-panel').html("Search for a new destination!");
@@ -649,5 +658,7 @@ function removeFromItinerary(index) {
 }
 
 function changeName() {
+	$('#itinerary-title-group').hide();
 	$('#name-input').show();
+	$('itinerary-name').val(itinerary_name);
 }
